@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <title>MarkdownComposer</title>
+
+    <link rel="stylesheet" type="text/css" href="../css/semantic.css" />
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="../css/codemirror.css" />
+    <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+    <script src="../javascript/jquery.js"></script>
+    <script src="../javascript/semantic.js"></script>
+    <script src="../javascript/commonmark.js"></script>
+    <script src="../javascript/showdown.js"></script>
+    <script src="../javascript/main.js"></script>
+    <!--<script src="../javascript/codemirror.js"></script>
+    <script src="../javascript/mode/markdown/markdown.js"></script>-->
+    <script src="../javascript/ace/ace.js" />
+    <script src="../javascript/ace/mode-markdown.js" />
+</head>
+
+<body>
+    <script type="text/javascript">
+        //require('remote').require('browser-window').addDevToolsExtension('G:/MarkdownComposer///react-devtools-master')
+    </script>
+    <div class="ui grid main">
+        <div class="ui row">
+            <div class="column">
+                <div class="ui compact menu">
+                    <div class="menu">
+                        <a class="active item">
+                            <i class="home icon"></i> 主页
+                        </a>
+                        <div class="ui pointing dropdown link item">
+                            <i class="icon mail"></i> 消息 <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <a class="item"><i class="mail icon"></i>收件箱</a>
+                                <a class="item"><i class="book icon"></i>附件</a>
+                            </div>
+                        </div>
+                        <a class="item">
+                            <i class="user icon"></i> 浏览
+                        </a>
+                        <a class="item">
+                            <i class="question icon"></i> 帮助
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui divider"></div>
+
+        <div class="ui row">
+            <div class="column toolbar">
+                <div class="ui icon buttons">
+                    <div class="ui button"><i class="file text icon"></i> </div>
+                    <div class="ui button"><i class="folder open icon"></i> </div>
+                    <div class="ui button"><i class="save icon"></i> </div>
+                </div>
+                <div class="ui icon buttons">
+                    <div class="ui button"><i class="align left icon"></i> </div>
+                    <div class="ui button"><i class="align center icon"></i> </div>
+                    <div class="ui button"><i class="align right icon"></i> </div>
+                    <div class="ui button"><i class="align justify icon"></i> </div>
+                </div>
+                <div class="ui icon buttons">
+                    <div class="ui button"><i class="bold icon"></i> </div>
+                    <div class="ui button"><i class="underline icon"></i> </div>
+                    <div class="ui button"><i class="text width icon"></i> </div>
+                </div>
+                <div class="ui icon buttons">
+                    <div class="ui button"><i class="reply icon"></i> </div>
+                    <div class="ui button"><i class="share icon"></i> </div>
+                </div>
+                <div class="ui icon buttons">
+                    <div class="ui button"><i class="bold icon"></i> </div>
+                    <div class="ui button"><i class="italic icon"></i> </div>
+                    <div class="ui button"><i class="quote left icon"></i> </div>
+                    <div class="ui button"><i class="code icon"></i> </div>
+                    <div class="ui button"><i class="header icon"></i> </div>
+                </div>
+                <div class="ui icon buttons">
+                    <div class="ui button"><i class="linkify icon"></i> </div>
+                    <div class="ui button"><i class="file image outline icon"></i> </div>
+                    <div class="ui button"><i class="list icon"></i> </div>
+                    <div class="ui button"><i class="ordered list icon"></i> </div>
+                    <div class="ui button"><i class="ellipsis horizontal icon"></i> </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui divider"></div>
+        <div class="ui row viewport">
+            <div class="ui column" id="maintab">
+
+                <div class="ui bottom attached active tab segment container" id="file_0" data-tab="first">
+                    <div class="source" id="file_0_source"></div>
+                    <div class="splitdragger">&nbsp;</div>
+                    <div class="render" id="file_0_view">sdf</div>
+                </div>
+                <div class="ui bottom attached tab segment" data-tab="second">
+                    Second
+                </div>
+                <div class="ui bottom attached tab segment" data-tab="third">
+                    Third
+                </div>
+                <div class="ui bottom attached tabular menu">
+                    <a class="active item" data-tab="first">First</a>
+                    <a class="item" data-tab="second">Second</a>
+                    <a class="item" data-tab="third">Third</a>
+                </div>
+            </div>
+        </div>
+</body>
+
+
+</html>

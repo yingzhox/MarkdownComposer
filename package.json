@@ -1,0 +1,10 @@
+{
+  "name": "MarkdownComposer",
+  "version": "0.0.0",
+  "description": "MarkdownComposer",
+  "main": "app.js",
+  "author": {
+    "name": "Yingzhong",
+    "email": ""
+  }
+}
