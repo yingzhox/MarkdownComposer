@@ -1,6 +1,6 @@
 "use strict";
 
-jQuery.expr[':'].regex = function (elem, index, match) {
+jQuery.expr[':'].regex = function(elem, index, match) {
     var matchParams = match[3].split(','),
         validLabels = /^(data|css):/,
         attr = {
@@ -15,13 +15,13 @@ jQuery.expr[':'].regex = function (elem, index, match) {
 
 
 var editors = {};
-var mkrws = {};
-$(document).ready(function () {
+var mkd = {};
+$(document).ready(function() {
     $('.ui.dropdown').dropdown({
         on: 'hover'
     });
 
-    $(document).mouseup(function (e) {
+    $(document).mouseup(function(e) {
         $(document).unbind('mousemove');
     });
 
@@ -41,14 +41,14 @@ function initializeEditor(i) {
     });
     editor.session.setUseWrapMode(true);
     editor.container.style.lineHeight = "1.6";
-    editor.on("change", function (e) {
+    editor.on("change", function(e) {
         render(i, e);
     });
     var previousScroll = 0;
-    editor.selection.on("changeCursor", function (e) {
+    editor.selection.on("changeCursor", function(e) {
         markSelection(editors['editor_' + i], i);
     });
-    editor.session.on("changeScrollTop", function (e) {
+    editor.session.on("changeScrollTop", function(e) {
         //console.log(e);
         var direction = e - previousScroll;
         syncScroll(editors['editor_' + i], i, direction);
@@ -56,17 +56,12 @@ function initializeEditor(i) {
     });
     editors['editor_' + i] = editor;
 
-    var commonmark = window.commonmark;
-    var writer = new commonmark.HtmlRenderer({
-        sourcepos: true
+    var md = window.markdownit({
+        html: true,
+        linkify: true,
+        typographer: true
     });
-    var reader = new commonmark.Parser();
-
-    var mkrw = {
-        reader: reader,
-        writer: writer
-    };
-    mkrws['editor_' + i] = mkrw;
+    mkd['editor_' + i] = md;
 }
 
 function render(i, e) {
@@ -75,9 +70,9 @@ function render(i, e) {
     var value = editor.getValue();
     //console.log(value);
 
-    var mk = mkrws['editor_' + i];
-    var parsed = mk.reader.parse(value);
-    renderHTML(i, mk.writer, parsed);
+    var md = mkd['editor_' + i];
+    var parsed = md.render(value);
+    renderHTML(i, parsed);
     markSelection(editors['editor_' + i], i);
     //var converter = new showdown.Converter();
     //var html = converter.makeHtml(value);
@@ -85,13 +80,11 @@ function render(i, e) {
 }
 
 
-function renderHTML(i, writer, parsed) {
+function renderHTML(i, parsed) {
     if (parsed === undefined) {
         return;
     }
-    var result = writer.render(parsed);
-    console.log(writer);
-    $("#file_" + i + "_view").html(result);
+    $("#file_" + i + "_view").html(parsed);
     // $("#html").text(result);
     // $("#ast").text(xmlwriter.render(parsed));
     // $("#rendertime").text(renderTime);
@@ -154,9 +147,9 @@ function initializeTab(i) {
     var max = 3600;
     var mainmin = 200;
     var id = '#file_' + i + ' .splitdragger';
-    $(id).mousedown(function (e) {
+    $(id).mousedown(function(e) {
         e.preventDefault();
-        $(document).mousemove(function (e) {
+        $(document).mousemove(function(e) {
             e.preventDefault();
             var source = $(id).prev();
             var render = $(id).next();
