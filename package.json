@@ -8,7 +8,10 @@
     "email": ""
   },
   "dependencies": {
+    "browserify": "^10.2.1",
     "markdown-it": "^4.2.1",
-    "markdown-it-anchor": "^1.1.2"
+    "markdown-it-anchor": "^1.1.2",
+    "markdown-it-footnote": "^1.0.0",
+    "markdown-it-highlightjs": "^1.1.2"
   }
 }
