@@ -184,17 +184,28 @@ function onResize(editor) {
         }
     }
 }
-function bsearchElementByLine(line){
-    var els = $(".source-line");
+function bsearchElementByLine(i,line,mustMatch){
+    var els = $("#file_" + i + "_view .source-line");
     if(els.length>0){
         var left=0,mid,right=els.length-1;
-        for(;left<right;){
-            mid=(left+right)/2;
-            var start = els[mid].attr('start');
+        for(;left<=right;){
+            mid=parseInt((left+right)/2);
+            var start = parseInt(els[mid].getAttribute('start'));
             if(start>line){
-                mid=right;
+                right=mid-1;
             }else if(start<line){
-                mid=left;
+                if(mid+1>right || els[mid+1].getAttribute('start') > line){
+                    if(mustMatch){ // for hightlight use
+                        if(parseInt(els[mid].getAttribute('end'))>=line){
+                            return els[mid];
+                        }else{
+                            return null;
+                        }
+                    }else{ //for sync scroll
+                        return els[mid];
+                    }
+                }
+                left=mid+1;
             }else{
                 return els[mid];
             }
@@ -209,16 +220,22 @@ function syncScroll(editor, i, direction) {
     if (!editor.isRowFullyVisible(row) && direction > 0) { //scroll down
         row++;
     }
-    var expStart = "#file_" + i + "_view :regex(data-sourcepos,^" + (row + 1) + "\:)";
-    var expEnd = '#file_' + i + '_view :regex(data-sourcepos,\-' + (row + 1) + '\:\\d+$)';
+    //console.log("searchline:"+(row+1))
+    var el = bsearchElementByLine(i,row+1,false);
+    //var expStart = "#file_" + i + "_view :regex(data-sourcepos,^" + (row + 1) + "\:)";
+    //var expEnd = '#file_' + i + '_view :regex(data-sourcepos,\-' + (row + 1) + '\:\\d+$)';
     //console.log("#file_" + i + "_view [data-sourcepos^='" + (cursor.row + 1) + ":']");
     //console.log(expEnd);
-    var elt = $(expEnd).add(expStart).last();
-    if (elt.length > 0) {
+    //var elt = $(expEnd).add(expStart).last();
+    if (el!=null) {
+        //console.log(el);
         //console.log(elt);
+        var elt = $(el);
+        $('#file_' + i + '_view').clearQueue();
+        $('#file_' + i + '_view').stop();
         $('#file_' + i + '_view').animate({
             scrollTop: $('#file_' + i + '_view').scrollTop() + elt.position().top - 34
-        }, 20);
+        }, 40);
         //elt.scrollIntoView(true);
         //syncScroll();
     }
@@ -227,15 +244,14 @@ function syncScroll(editor, i, direction) {
 
 function markSelection(editor, i) {
     var cursor = editor.selection.getCursor();
-    //console.log(cursor);
-    var expStart = "#file_" + i + "_view :regex(data-sourcepos,^" + (cursor.row + 1) + "\:)";
-    var expEnd = '#file_' + i + '_view :regex(data-sourcepos,\-' + (cursor.row + 1) + '\:\\d+$)';
-    //console.log("#file_" + i + "_view [data-sourcepos^='" + (cursor.row + 1) + ":']");
-    //console.log(expEnd);
-    $("#file_" + i + "_view .selected").removeClass("selected");
-    var elt = $(expEnd).add(expStart).last();
-    if (elt.length > 0) {
+    console.log("selec line:"+cursor.row+1);
+    
+    //$("#file_" + i + "_view .selected").removeClass("selected");
+    var el = bsearchElementByLine(i,cursor.row + 1,true);
+    //console.log(el);    
+    if (el != null) {
         //console.log(elt);
+        var elt = $(el);
         elt.addClass("selected");
         //syncScroll();
     }
