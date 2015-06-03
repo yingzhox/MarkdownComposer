@@ -1,4 +1,4 @@
-// browserify -r markdown-it-anchor -r markdown-it-footnote -r markdown-it-highlightjs > javascript/markdown/plugins.js  
+// browserify -r markdown-it-anchor -r markdown-it-footnote -r markdown-it-highlightjs -r ./plugins/markdown-it-mathjax.js:markdown-it-mathjax > javascript/markdown/plugins.js  
 "use strict";
 
 jQuery.expr[':'].regex = function(elem, index, match) {
@@ -13,7 +13,7 @@ jQuery.expr[':'].regex = function(elem, index, match) {
         regex = new RegExp(matchParams.join('').replace(/^s+|s+$/g, ''), regexFlags);
     return regex.test(jQuery(elem)[attr.method](attr.property));
 };
-
+ 
 
 var editors = {};
 var mkd = {};
@@ -58,34 +58,94 @@ function initializeEditor(i) {
     editors['editor_' + i] = editor;
 
     var md = window.markdownit({
-        html: true,
-        linkify: true,
-        typographer: true
-    //}).use(require('markdown-it-anchor'),{level:1});
-    }).use(require("markdown-it-footnote"))
-    .use(require("markdown-it-highlightjs"));
+            html: true,
+            linkify: true,
+            typographer: true
+                //}).use(require('markdown-it-anchor'),{level:1});
+        }).use(require("markdown-it-footnote"))
+        .use(require("markdown-it-highlightjs"))
+        .use(require("markdown-it-mathjax"), {
+            inlineOpen: '$',
+            inlineClose: '$',
+            blockOpen: '$$',
+            blockClose: '$$',
+            inlineRenderer: function(token) {
+                //console.log(token);
+                var content = token.content;
+                var id = new Date().getTime();
+                var rs;
+                if(token.meta.isBlock){
+                    rs = "<div id='math-" + id + "' class='math' style='text-align:center;'>" + content + "</div>";
+                }else{
+                    rs = "<span id='math-" + id + "' class='math'>" + content + "</span>";
+                    
+                }
+                return rs;
+            },
+            renderingoptions: {}
+        });
     initializeMD(md);
     mkd['editor_' + i] = md;
 }
 
-function initializeMD(md){
-  //
-  // Inject line numbers for sync scroll. Notes:
-  //
-  // - We track only headings and paragraphs on first level. That's enough.
-  // - Footnotes content causes jumps. Level limit filter it automatically.
-  function injectLineNumbers(tokens, idx, options, env, self) {
-    var line;
-    if (tokens[idx].map /*&& tokens[idx].level === 0*/) {
-      line = tokens[idx].map[0];
-      tokens[idx].attrPush([ 'class', 'source-line' ]);
-      tokens[idx].attrPush([ 'data-line', String(line+1) ]);
-    }
-    return self.renderToken(tokens, idx, options, env, self);
-  }
-
-  md.renderer.rules.paragraph_open = md.renderer.rules.heading_open = md.renderer.rules.list_item_open = injectLineNumbers;
+function renderMath(i){
+    var mathElements = $('#file_'+i+'_view .math');
+    //console.log(mathElements);
+    mathElements.each(function(){
+        var el = $(this);
+        var text = el.text();
+            
+        try {
+           katex.render(text, this);
+        }
+        catch(err) {
+            el.html("<span style='color:red;font-style:italic;'>"+err.message+"</span>");
+        }
+        // var el = $(this);
+        // var jax;
+        // var target= document.getElementById(el.attr('id'));
+        // console.log(target);
+        // MathJax.Hub.Queue(
+        //   //["Typeset",MathJax.Hub,target],
+        //   function (){
+        //       MathJax.Hub.Typeset(target);
+        //   },
+        //   function () {
+        //       jax = MathJax.Hub.getAllJax(el.attr('id'))[0];
+        //   },
+        //   ["Text",jax,el.text()]
+        // );
+        //console.log($(this).text());
+        //MathJax.Hub.queue.Push(function(){},["Text",math,$(this).text()],function(){});
+    });
 }
+
+// function renderMath(id,text) {
+//     var math = MathJax.Hub.getAllJax(id)[0];
+//         MathJax.Hub.Queue(["Text",math,tet]);
+// }
+
+function initializeMD(md) {
+    //
+    // Inject line numbers for sync scroll. Notes:
+    //
+    // - We track only headings and paragraphs on first level. That's enough.
+    // - Footnotes content causes jumps. Level limit filter it automatically.
+    function injectLineNumbers(tokens, idx, options, env, self) {
+        var line;
+        if (tokens[idx].map /*&& tokens[idx].level === 0*/ ) {
+            line = tokens[idx].map[0];
+            tokens[idx].attrPush(['class', 'source-line']);
+            tokens[idx].attrPush(['start', String(line + 1)]);
+            if(tokens[idx].map.length > 1)
+                tokens[idx].attrPush(['end', String(tokens[idx].map[1])]);
+        }
+        return self.renderToken(tokens, idx, options, env, self);
+    }
+
+    md.renderer.rules.paragraph_open = md.renderer.rules.heading_open = md.renderer.rules.list_item_open = injectLineNumbers;
+}
+
 function render(i, e) {
     //change data = e.data;
     var editor = editors['editor_' + i];
@@ -95,6 +155,7 @@ function render(i, e) {
     var md = mkd['editor_' + i];
     var parsed = md.render(value);
     renderHTML(i, parsed);
+    renderMath(i);
     markSelection(editors['editor_' + i], i);
     //var converter = new showdown.Converter();
     //var html = converter.makeHtml(value);
@@ -123,7 +184,24 @@ function onResize(editor) {
         }
     }
 }
-
+function bsearchElementByLine(line){
+    var els = $(".source-line");
+    if(els.length>0){
+        var left=0,mid,right=els.length-1;
+        for(;left<right;){
+            mid=(left+right)/2;
+            var start = els[mid].attr('start');
+            if(start>line){
+                mid=right;
+            }else if(start<line){
+                mid=left;
+            }else{
+                return els[mid];
+            }
+        }
+    }
+    return null;
+}
 function syncScroll(editor, i, direction) {
     editor.renderer.$computeLayerConfig();
     var row = editor.getFirstVisibleRow();
