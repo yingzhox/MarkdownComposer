@@ -244,9 +244,9 @@ function syncScroll(editor, i, direction) {
 
 function markSelection(editor, i) {
     var cursor = editor.selection.getCursor();
-    console.log("selec line:"+cursor.row+1);
+    //console.log("selec line:"+(cursor.row+1));
     
-    //$("#file_" + i + "_view .selected").removeClass("selected");
+    $("#file_" + i + "_view .selected").removeClass("selected");
     var el = bsearchElementByLine(i,cursor.row + 1,true);
     //console.log(el);    
     if (el != null) {

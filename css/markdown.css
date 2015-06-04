@@ -6,11 +6,12 @@
 =============================================================================*/
 
 .render {
-    font-family: Helvetica, arial, freesans, clean, sans-serif;
+    font-family: 'Source Sans Pro', Menlo, 'Ubuntu Mono', Consolas, 'Courier New', 'Microsoft Yahei', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif !important;
     font-size: 14px;
     line-height: 1.6;
     color: #333;
     /*background-color: #fff;*/
+    
     padding: 0px 20px 0 20px;
     max-width: 960px;
     margin: 0 auto;
@@ -36,12 +37,12 @@
 .render h4,
 .render h5,
 .render h6 {
+    font-family: 'Source Sans Pro', Menlo, 'Ubuntu Mono', Consolas, 'Courier New', 'Microsoft Yahei', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;
     margin: 20px 0 10px;
     padding: 0;
-    font-weight: bold;
+    font-weight: 500;
     -webkit-font-smoothing: antialiased;
 }
-
 .render h1 tt,
 .render h1 code,
 .render h2 tt,
@@ -56,35 +57,28 @@
 .render h6 code {
     font-size: inherit;
 }
-
 .render h1 {
-    font-size: 28px;
+    font-size: 30px;
     color: #000;
 }
-
 .render h2 {
-    font-size: 24px;
+    font-size: 26px;
     border-bottom: 1px solid #ccc;
     color: #000;
 }
-
 .render h3 {
+    font-size: 22px;
+}
+.render h4 {
+    font-size: 20px;
+}
+.render h5 {
     font-size: 18px;
 }
-
-.render h4 {
-    font-size: 16px;
-}
-
-.render h5 {
-    font-size: 14px;
-}
-
 .render h6 {
     color: #777;
     font-size: 14px;
 }
-
 .render >h2:first-child,
 .render >h1:first-child,
 .render >h1:first-child+h2,
@@ -95,7 +89,6 @@
     margin-top: 0;
     padding-top: 0;
 }
-
 .render a:first-child h1,
 .render a:first-child h2,
 .render a:first-child h3,
@@ -105,7 +98,6 @@
     margin-top: 0;
     padding-top: 0;
 }
-
 .render h1+p,
 .render h2+p,
 .render h3+p,
@@ -121,7 +113,6 @@
     color: #4183C4;
     text-decoration: none;
 }
-
 .render a:hover {
     text-decoration: underline;
 }
@@ -132,7 +123,6 @@
 .render ol {
     padding-left: 30px;
 }
-
 .render ul li >:first-child,
 .render ol li >:first-child,
 .render ul li ul:first-of-type,
@@ -141,18 +131,15 @@
 .render ol li ul:first-of-type {
     margin-top: 0px;
 }
-
 .render ul ul,
 .render ul ol,
 .render ol ol,
 .render ol ul {
     margin-bottom: 0;
 }
-
 .render dl {
     padding: 0;
 }
-
 .render dl dt {
     font-size: 14px;
     font-weight: bold;
@@ -160,28 +147,22 @@
     padding: 0;
     margin: 15px 0 5px;
 }
-
 .render dl dt:first-child {
     padding: 0;
 }
-
 .render dl dt>:first-child {
     margin-top: 0px;
 }
-
 .render dl dt>:last-child {
     margin-bottom: 0px;
 }
-
 .render dl dd {
     margin: 0 0 15px;
     padding: 0 15px;
 }
-
 .render dl dd>:first-child {
     margin-top: 0px;
 }
-
 .render dl dd>:last-child {
     margin-bottom: 0px;
 }
@@ -192,9 +173,8 @@
 .render code,
 .render tt {
     font-size: 12px;
-    font-family: Consolas, "Liberation Mono", Courier, monospace;
+    /*font-family: Consolas, "Liberation Mono", Courier, monospace;*/
 }
-
 .render code,
 .render tt {
     margin: 0 0px;
@@ -204,7 +184,6 @@
     background-color: #f8f8f8;
     border-radius: 3px;
 }
-
 .render pre>code {
     margin: 0;
     padding: 0;
@@ -212,7 +191,6 @@
     border: none;
     background: transparent;
 }
-
 .render pre {
     background-color: #f8f8f8;
     border: 1px solid #ccc;
@@ -222,13 +200,11 @@
     padding: 6px 10px;
     border-radius: 3px;
 }
-
 .render pre code,
 .render pre tt {
     background-color: transparent;
     border: none;
 }
-
 .render kbd {
     -moz-border-bottom-colors: none;
     -moz-border-left-colors: none;
@@ -242,7 +218,8 @@
     border-radius: 2px 2px 2px 2px;
     border-style: solid;
     border-width: 1px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    
     line-height: 10px;
     padding: 1px 4px;
 }
@@ -254,11 +231,9 @@
     padding: 0 15px;
     color: #777;
 }
-
 .render blockquote>:first-child {
     margin-top: 0px;
 }
-
 .render blockquote>:last-child {
     margin-bottom: 0px;
 }
@@ -281,18 +256,15 @@
 .render table th {
     font-weight: bold;
 }
-
 .render table th,
 .render table td {
     border: 1px solid #ccc;
     padding: 6px 13px;
 }
-
 .render table tr {
     border-top: 1px solid #ccc;
     background-color: #fff;
 }
-
 .render table tr:nth-child(2n) {
     background-color: #f8f8f8;
 }

@@ -3,7 +3,11 @@ define("ace/theme/markdowncomposer", ["require", "exports", "module", "ace/lib/d
     exports.isDark = false;
     exports.cssClass = "ace-github";
     exports.cssText = "\
+.ace_cursor-layer{\
+z-index:1;\
+}\
 .ace-github .ace_gutter {\
+z-index: 1;\
 background: rgb(245, 247, 250);\
 border-right-color: rgb(211, 218, 234);\
 border-right-style: solid;\
