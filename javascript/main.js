@@ -39,7 +39,7 @@ function initializeEditor(i) {
     editor.getSession().setMode("ace/mode/markdown");
     editor.setOptions({
         fontFamily: "Menlo, 'Ubuntu Mono', Consolas, 'Courier New', 'Microsoft Yahei', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif",
-        fontSize: "14px"
+        fontSize: "16px"
     });
     editor.session.setUseWrapMode(true);
     editor.container.style.lineHeight = "1.6";
