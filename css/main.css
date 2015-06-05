@@ -1,6 +1,8 @@
 body {
     /*font-family: Menlo, 'Ubuntu Mono', Consolas, 'Courier New', 'Microsoft Yahei', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;*/
-    overflow-y:hidden;
+    
+    overflow-y: hidden;
+    height: calc(100%);
 }
 .ui.grid {
     margin-left: 0;
@@ -20,19 +22,20 @@ body {
 }
 .viewport {
     height: calc(100vh - 135px);
-    padding:0px !important;
+    padding: 0px !important;
 }
 #maintab {
     height: calc(100%);
-    padding-left:0px;
-    padding-right:3px;
+    padding-left: 0px;
+    padding-right: 3px;
 }
 #maintab > .segment {
     height: calc(100% - 28px);
     /* padding 14px */
 }
-#maintab .container{
-    padding:0px;
+#maintab .container {
+    padding: 0px;
+    overflow-y:hidden;
 }
 .source {
     width: 50%;
@@ -91,10 +94,11 @@ body {
 
 .render {
     /*background-image: url(../images/groovepaper.png);*/
-    background-color:rgb(246,246,246);
+    
+    background-color: rgb(246, 246, 246);
 }
 .render .selected {
-    background: rgb(247, 250, 252);
+    background: rgb(255, 239, 239);
 }
 /* left top corner button*/
 
@@ -110,44 +114,43 @@ body {
     outline: none;
     border: none;
     line-height: 1;
-  font-style: normal;
-  text-align: center;
+    font-style: normal;
+    text-align: center;
 }
 #file::selection {
     background-color: #cce2ff;
     color: rgba(0, 0, 0, .8);
 }
-#file.active.item{
-    margin-bottom:inherit;
-    font-weight:normal;
-    
+#file.active.item {
+    margin-bottom: inherit;
+    font-weight: normal;
 }
-#file:hover{
-    background:rgb(78,139,242);
-    padding-bottom:8px;
+#file:hover {
+    background: rgb(78, 139, 242);
+    padding-bottom: 8px;
 }
-.ribbon{
+.ribbon {
     font-family: 'Roboto', Arial, sans-serif;
-    box-shadow: 0px 0px 3px 3px rgba(230, 230, 230,0.8);
-    z-index:5;
+    box-shadow: 0px 0px 3px 3px rgba(230, 230, 230, 0.8);
+    z-index: 5;
 }
-.ribbon .ui.menu .item{
-    padding-bottom:8px;
+.ribbon .ui.menu .item {
+    padding-bottom: 8px;
 }
-.ribbon{
-    padding-left:0px !important;
-    padding-right:0px !important;
+.ribbon {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
 }
-.ribbon>.column{
-    padding-left:0px !important;
-    padding-right:0px !important;
+.ribbon>.column {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
 }
-#file:down{
-    background:rgb(30,238,108);
+#file:down {
+    background: rgb(30, 238, 108);
 }
-.menu.visible{
-    z-index:100 !important;
+.menu.visible {
+    z-index: 100 !important;
 }
-.ui.segment.attached{
-    max-width:100%;
+.ui.segment.attached {
+    max-width: 100%;
 }
