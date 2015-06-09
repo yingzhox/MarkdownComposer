@@ -1,4 +1,4 @@
-// browserify -r ./plugins/markdown-it-content-table.js:markdown-it-table-of-contents -r string -r markdown-it-footnote -r markdown-it-headinganchor -r markdown-it-highlightjs -r ./plugins/markdown-it-mathjax.js:markdown-it-mathjax > javascript/markdown/plugins.js  
+// browserify -r ./plugins/markdown-it-footnotes.js:markdown-it-footnote -r ./plugins/markdown-it-content-table.js:markdown-it-table-of-contents -r string -r markdown-it-headinganchor -r markdown-it-highlightjs -r ./plugins/markdown-it-mathjax.js:markdown-it-mathjax > javascript/markdown/plugins.js  
 
 "use strict";
 
@@ -72,15 +72,15 @@ function initializeEditor(i) {
         // })
         .use(require('markdown-it-headinganchor'), {
             anchorClass: 'head-anchor',
-            addHeadingID : false,
+            addHeadingID: false,
             slugify: function(str, md) {
                 var string = require("string");
                 return string(str).stripTags().slugify().toString();
             }
         })
-        .use(require("markdown-it-table-of-contents"),{
-            includeLevel:4,
-            slugify:function(str) {
+        .use(require("markdown-it-table-of-contents"), {
+            includeLevel: 4,
+            slugify: function(str) {
                 var string = require("string");
                 return string(str).stripTags().slugify().toString();
             }
@@ -173,8 +173,81 @@ function initializeMD(md) {
     injectCodeBlock(md.renderer.rules);
     injectCodeInline(md.renderer.rules);
     injectFences(md.renderer.rules);
-    injecTOC(md.renderer.rules);
+    injectTOC(md.renderer.rules);
+    injectHTML(md.renderer.rules);
+    injectRenderToken(md.renderer);
 
+}
+
+function injectRenderToken(renderer) {
+    renderer.renderToken = function(tokens, idx, options) {
+        var tok = tokens[idx];
+        if (tok.map) {
+            tok.attrPush(['class', 'source-line']);
+            tok.attrPush(['start', String(tok.map[0] + 1)]);
+            tok.attrPush(['ext', getExt(tokens, idx)]);
+            if (tok.map.length > 1)
+                tok.attrPush(['end', String(tokens[idx].map[1])]);
+        }
+        var nextToken,
+            result = '',
+            needLf = false,
+            token = tokens[idx];
+
+        // Tight list paragraphs
+        if (token.hidden) {
+            return '';
+        }
+
+        // Insert a newline between hidden paragraph and subsequent opening
+        // block-level tag.
+        //
+        // For example, here we should insert a newline before blockquote:
+        //  - a
+        //    >
+        //
+        if (token.block && token.nesting !== -1 && idx && tokens[idx - 1].hidden) {
+            result += '\n';
+        }
+
+        // Add token name, e.g. `<img`
+        result += (token.nesting === -1 ? '</' : '<') + token.tag;
+
+        // Encode attributes, e.g. `<img src="foo"`
+        result += renderer.renderAttrs(token);
+
+        // Add a slash for self-closing tags, e.g. `<img src="foo" /`
+        if (token.nesting === 0 && options.xhtmlOut) {
+            result += ' /';
+        }
+
+        // Check if we need to add a newline after this tag
+        if (token.block) {
+            needLf = true;
+
+            if (token.nesting === 1) {
+                if (idx + 1 < tokens.length) {
+                    nextToken = tokens[idx + 1];
+
+                    if (nextToken.type === 'inline' || nextToken.hidden) {
+                        // Block-level tag containing an inline tag.
+                        //
+                        needLf = false;
+
+                    }
+                    else if (nextToken.nesting === -1 && nextToken.tag === token.tag) {
+                        // Opening tag + closing tag of the same type. E.g. `<li></li>`.
+                        //
+                        needLf = false;
+                    }
+                }
+            }
+        }
+
+        result += needLf ? '>\n' : '>';
+
+        return result;
+    };
 }
 
 function getExt(tokens, idx) {
@@ -196,13 +269,23 @@ function getStartEndAttr(tokens, idx) {
     return "";
 }
 
-function injecTOC(rules) {
+function injectTOC(rules) {
     var oldCB = rules.toc_open;
     rules.toc_open = function(tokens, idx, options, env, self) {
         var rs = oldCB(tokens, idx, options, env, self);
         return rs.replace("<div", "<div" + getStartEndAttr(tokens, idx));
     };
 }
+
+function injectHTML(rules) {
+    var oldCB = rules.html_block;
+    var newFunc = function(tokens, idx, options, env, self) {
+        var rs = oldCB(tokens, idx, options, env, self);
+        return rs.replace(">", " " + getStartEndAttr(tokens, idx) + ">");
+    };
+    rules.html_block = newFunc;
+}
+
 function injectCodeBlock(rules) {
     var oldCB = rules.code_block;
     rules.code_block = function(tokens, idx, options, env, self) {
@@ -289,7 +372,9 @@ function bsearchElementByLine(i, line, mustMatch) {
                         }
                     }
                     else { //for sync scroll
-                        return els[mid];
+                        if (parseInt(els[mid].getAttribute('ext')) >= line) {
+                            return els[mid];
+                        }
                     }
                 }
                 left = mid + 1;
@@ -305,31 +390,63 @@ function bsearchElementByLine(i, line, mustMatch) {
 function syncScroll(editor, i, direction) {
     editor.renderer.$computeLayerConfig();
     var row = editor.getFirstVisibleRow();
-    //console.log(row + " fully?:" + editor.isRowFullyVisible(row) + " direction:" + direction);
     if (!editor.isRowFullyVisible(row) && direction > 0) { //scroll down
         row++;
     }
-    //console.log("searchline:"+(row+1))
     var el = bsearchElementByLine(i, row + 1, false);
-    //var expStart = "#file_" + i + "_view :regex(data-sourcepos,^" + (row + 1) + "\:)";
-    //var expEnd = '#file_' + i + '_view :regex(data-sourcepos,\-' + (row + 1) + '\:\\d+$)';
-    //console.log("#file_" + i + "_view [data-sourcepos^='" + (cursor.row + 1) + ":']");
-    //console.log(expEnd);
-    //var elt = $(expEnd).add(expStart).last();
     if (el != null) {
         //console.log(el);
         //console.log(elt);
         var elt = $(el);
-        $('#file_' + i + '_view').clearQueue();
-        $('#file_' + i + '_view').stop();
-        $('#file_' + i + '_view').animate({
-            scrollTop: $('#file_' + i + '_view').scrollTop() + elt.position().top - 34
-        }, 40, 'swing');
-        //elt.scrollIntoView(true);
-        //syncScroll();
+        var preview = $('#file_' + i + '_view');
+        var percentage = 1;
+        var full =  elt.attr('ext')-elt.attr('start');
+        
+        if(full!=0){
+            percentage = (row+1-elt.attr('start'))*1.0/full;
+        }
+        //console.log((row+1)+" full:"+full+" percentage:"+percentage);
+        var offset = elt.position().top  + elt.height()*(percentage);
+        var dest = preview.scrollTop() + offset ;//+10;
+        //console.log("off:"+offset+" top:"+elt.position().top);
+        animateScroll(preview[0],preview.scrollTop(),dest,function(){})
+    }else{
+        //scroll by percent
+        
     }
 
 };
+
+var timeoutId;
+var currentEndCb;
+
+function animateScroll(elt, startValue, endValue, endCb) {
+    if (currentEndCb) {
+        clearTimeout(timeoutId);
+        currentEndCb();
+    }
+    currentEndCb = endCb;
+    var diff = endValue - startValue;
+    var startTime = Date.now();
+
+    function tick() {
+        var currentTime = Date.now();
+        var progress = (currentTime - startTime) / 200;
+        if (progress < 1) {
+            var scrollTop = startValue + diff * Math.cos((1 - progress) * Math.PI / 2);
+            elt.scrollTop = scrollTop;
+            //stepCb(scrollTop);
+            timeoutId = setTimeout(tick, 1);
+        }
+        else {
+            currentEndCb = undefined;
+            elt.scrollTop = endValue;
+            setTimeout(endCb, 100);
+        }
+    }
+
+    tick();
+}
 
 function markSelection(editor, i) {
     var cursor = editor.selection.getCursor();
