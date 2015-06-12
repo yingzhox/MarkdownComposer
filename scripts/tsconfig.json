@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": false,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "out": "./javascript/core.js",
+        "sourceMap": false
+    },
+    "files": [
+        "command.ts",
+        "main.ts"
+    ]
+}
