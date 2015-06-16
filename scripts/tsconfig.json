@@ -8,6 +8,7 @@
     },
     "files": [
         "command.ts",
-        "main.ts"
+        "main.ts",
+        "fileeditor.ts"
     ]
 }
