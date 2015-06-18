@@ -1,35 +1,37 @@
+/// <reference path="../typings/ace/ace.d.ts" />
+
 class FileEditor{
     editorID: number;
-    editor : ace;
+    editor : AceAjax.Editor;
     mkd: any;
     timeoutId: number;
     currentEndCb: any;
     initializeEditor(): void {
-        var i:number = editorID;
+        var i:number = this.editorID;
         var id = "file_" + i + "_source";
-        editor = ace.edit(id);
-        editor.setTheme("ace/theme/markdowncomposer");
-        editor.getSession().setMode("ace/mode/markdown");
-        editor.setOptions({
+        this.editor = ace.edit(id);
+        this.editor.setTheme("ace/theme/markdowncomposer");
+        this.editor.getSession().setMode("ace/mode/markdown");
+        this.editor.setOptions({
             fontFamily: "Menlo, 'Ubuntu Mono', Consolas, 'Courier New', 'Microsoft Yahei', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif",
             fontSize: "16px"
         });
-        editor.session.setUseWrapMode(true);
-        editor.container.style.lineHeight = "1.6";
-        editor.on("change", function(e) {
-            render(e);
+        this.editor.session.setUseWrapMode(true);
+        this.editor.container.style.lineHeight = "1.6";
+        this.editor.on("change", function(e) {
+            this.render(e);
         });
         var previousScroll = 0;
-        editor.selection.on("changeCursor", function(e) {
+        this.editor.selection.on("changeCursor", function(e) {
             markSelection(editors['editor_' + i], i);
         });
-        editor.session.on("changeScrollTop", function(e) {
+        this.editor.session.on("changeScrollTop", function(e) {
             //console.log(e);
             var direction = e - previousScroll;
-            syncScroll(editors['editor_' + editorID], direction);
+            this.syncScroll(editors['editor_' + this.editorID], direction);
             previousScroll = e;
         });
-        editors['editor_' + i] = editor;
+        editors['editor_' + i] = this.editor;
     
         var md = window['markdownit']({
                 html: true,
@@ -106,7 +108,7 @@ class FileEditor{
     //
     // - We track only headings and paragraphs on first level. That's enough.
     // - Footnotes content causes jumps. Level limit filter it automatically.
-    injectLineNumbers(tokens, idx, options, env: any, self) {
+    function injectLineNumbers(tokens, idx, options, env , self): any{
         var line: number;
         if (tokens[idx].map && tokens[idx].level === 0) {
             line = tokens[idx].map[0];
@@ -265,14 +267,14 @@ injectFences(rules: any) {
 
 render(e) {
     //change data = e.data;
-    var value = editor.getValue();
+    var value = this.editor.getValue();
     //console.log(value);
 
     //var md = mkd['editor_' + i];
     var parsed = this.mkd.render(value);
-    renderHTML(parsed);
-    renderMath(editorID);
-    markSelection(editor);
+    this.renderHTML(parsed);
+    this.renderMath();
+    this.markSelection();
     //var converter = new showdown.Converter();
     //var html = converter.makeHtml(value);
     //$("#file_" + i + "_view").html(html);
@@ -283,7 +285,7 @@ renderHTML(parsed) {
     if (parsed === undefined) {
         return;
     }
-    $("#file_" + editorID + "_view").html(parsed);
+    $("#file_" + this.editorID + "_view").html(parsed);
     // $("#html").text(result);
     // $("#ast").text(xmlwriter.render(parsed));
     // $("#rendertime").text(renderTime);
@@ -302,7 +304,7 @@ onResize(editor) {
 }
 
 bsearchElementByLine(line, mustMatch) {
-    var els = $("#file_" + editorID + "_view > .source-line");
+    var els = $("#file_" + this.editorID + "_view > .source-line");
     if (els.length > 0) {
         var left = 0,
             mid, right = els.length - 1;
@@ -344,12 +346,12 @@ syncScroll(editor: any, direction: number) {
     if (!editor.isRowFullyVisible(row) && direction > 0) { //scroll down
         row++;
     }
-    var el = bsearchElementByLine(row + 1, false);
+    var el = this.bsearchElementByLine(row + 1, false);
     if (el != null) {
         //console.log(el);
         //console.log(elt);
         var elt = $(el);
-        var preview = $('#file_' + editorID + '_view');
+        var preview = $('#file_' + this.editorID + '_view');
         var percentage = 1;
         var full =  parseInt(elt.attr('ext'))-parseInt(elt.attr('start'));
         
@@ -397,12 +399,12 @@ animateScroll(elt, startValue: number, endValue : number, endCb) {
     tick();
 }
 
-markSelection(editor, i:number) {
-    var cursor = editor.selection.getCursor();
+markSelection() {
+    var cursor = this.editor.selection.getCursor();
     //console.log("selec line:"+(cursor.row+1));
 
-    $("#file_" + i + "_view .selected").removeClass("selected");
-    var el = bsearchElementByLine(i, cursor.row + 1, true);
+    $("#file_" + this.editorID + "_view .selected").removeClass("selected");
+    var el = this.bsearchElementByLine(cursor.row + 1, true);
     //console.log(el);    
     if (el != null) {
         //console.log(elt);
