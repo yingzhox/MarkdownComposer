@@ -5,11 +5,15 @@
   "main": "app.js",
   "author": {
     "name": "Yingzhong",
-    "email": ""
+    "email": "Yingzhong.xu@live.com"
+  },
+  "scripts": {
+    "start": "node browser.js"
   },
   "dependencies": {
     "babelify": "^6.1.2",
     "browserify": "^10.2.1",
+    "express": "^4.13.0",
     "lodash.assign": "^3.2.0",
     "markdown-it": "^4.2.1",
     "markdown-it-headinganchor": "^1.3.0",
